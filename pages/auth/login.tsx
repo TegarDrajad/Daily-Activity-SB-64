@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { z } from 'zod'
 import Link from 'next/link'
 import Cookies from 'universal-cookie'
+import { toast } from 'sonner'
 
 const cookies = new Cookies()
 
@@ -48,11 +49,12 @@ export default function Login() {
         alert(result.message)
       } else {
         cookies.set('token', result.data.token, { path: '/' })
-        alert(result.message)
+        toast.success('Login Succesfully')
         router.push('/')
       }
     } catch (err) {
       setError('An error occurred. Please try again.')
+      toast.error('Failed to login')
       console.log(err)
     } finally {
       setLoading(false)

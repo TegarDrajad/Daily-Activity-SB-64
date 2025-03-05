@@ -1,9 +1,21 @@
 'use client'
 
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import Cookies from 'js-cookie'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 type User = {
   id: number
@@ -50,8 +62,9 @@ const fetcher = async (url: string): Promise<ApiResponse> => {
 
 export default function MyPostsPage() {
   const router = useRouter()
+  const [deleteId, setDeleteId] = useState<number | null>(null)
   const api_url = process.env.NEXT_PUBLIC_API_URL
-  const { data, error, isLoading } = useSWR<ApiResponse>(
+  const { data, error, isLoading, mutate } = useSWR<ApiResponse>(
     `${api_url}/api/posts?type=me`,
     fetcher,
     { revalidateOnFocus: true },
@@ -61,6 +74,37 @@ export default function MyPostsPage() {
   if (error) return <p className="text-red-500">{error.message}</p>
 
   const posts = data?.data || []
+
+  const handleDelete = async () => {
+    if (!deleteId) return
+
+    const token = Cookies.get('token')
+    if (!token) {
+      return alert('Unauthorized')
+    }
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/post/delete/${deleteId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+
+      if (!res.ok) throw new Error('Failed to delete post')
+      mutate()
+
+      toast.success('Post deleted successfully')
+    } catch (error) {
+      toast.error('Failed to delete post')
+      console.error('Delete error:', error)
+    } finally {
+      setDeleteId(null)
+    }
+  }
 
   return (
     <div className="container mx-auto p-4 flex flex-col gap-5">
@@ -80,21 +124,67 @@ export default function MyPostsPage() {
         ) : (
           <ul className="space-y-3">
             {posts.map((post) => (
-              <Link key={post.id} href={`/posts/${post.id}`}>
-                <li className="p-4 border rounded shadow mb-4">
-                  <h2 className="text-xl font-semibold">{post.description}</h2>
-                  <p className="text-gray-600">
-                    Author: {post.user.name} / You
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    {new Date(post.created_at).toLocaleDateString()}
-                  </p>
-                  <div className="flex gap-4 mt-2">
-                    <span>❤️ {post.likes_count}</span>
-                    <span>💬 {post.replies_count}</span>
+              <li
+                key={post.id}
+                className="p-6 border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition duration-200 bg-white"
+              >
+                <div className="flex justify-between items-center">
+                  <div className="cursor-pointer w-full">
+                    <h2 className="text-xl font-bold text-gray-800">
+                      {post.description}
+                    </h2>
+                    <p className="text-gray-600 text-sm">
+                      Author : {post.user.name} / You
+                    </p>
+                    <p className="text-gray-500 text-xs mt-1">
+                      {new Date(post.created_at).toLocaleDateString()}
+                    </p>
+                    <div className="flex gap-4 mt-2 text-gray-700">
+                      <span>❤️ {post.likes_count}</span>
+                      <span>💬 {post.replies_count}</span>
+                    </div>
                   </div>
-                </li>
-              </Link>
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => router.push(`/posts/${post.id}`)}
+                      className="px-4 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition"
+                    >
+                      Edit
+                    </button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <button
+                          onClick={() => setDeleteId(post.id)}
+                          className="px-4 py-2 text-sm font-medium text-red-600 border border-red-600 rounded-lg hover:bg-red-600 hover:text-white transition"
+                        >
+                          Delete
+                        </button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete this post.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel onClick={() => setDeleteId(null)}>
+                            Cancel
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDelete}
+                            className="bg-red-600 text-white"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              </li>
             ))}
           </ul>
         )}

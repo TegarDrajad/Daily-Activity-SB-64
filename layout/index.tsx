@@ -4,6 +4,18 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
+import { Toaster } from 'sonner'
+import { toast } from 'sonner'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -63,9 +75,9 @@ export default function RootLayout({
       >
         <header className="bg-blue-300 text-white p-4">
           <div className="container mx-auto flex justify-between items-center gap-10">
-            <h1 className="text-md font-bold">Daily Sanber</h1>
+            <h1 className="text-xl font-bold">Daily Sanber</h1>
             {isAuthentication && (
-              <ul className="flex space-x-4">
+              <ul className="flex space-x-4 items-center">
                 <li className="text-md font-bold">
                   <Link href="/">Home</Link>
                 </li>
@@ -76,22 +88,42 @@ export default function RootLayout({
                   <Link href="/posts/me">My Posts</Link>
                 </li>
                 <li>
-                  <button
-                    onClick={() => {
-                      Cookies.remove('token')
-                      router.push('/auth/login')
-                    }}
-                    className="text-left text-red-500 hover:text-red-300"
-                  >
-                    Logout
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button className="text-left text-white hover:bg-red-200 hover:cursor-pointer bg-red-600 px-2 py-1 rounded-lg">
+                        Logout
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you sure to logout ?
+                        </AlertDialogTitle>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => {
+                            Cookies.remove('token')
+                            router.push('/auth/login')
+                            toast.success('Logout Successfully')
+                          }}
+                        >
+                          Logout
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </li>
               </ul>
             )}
           </div>
         </header>
 
-        <main className="flex-1 container mx-auto p-4">{children}</main>
+        <main className="flex-1 container mx-auto p-4">
+          {children}
+          <Toaster position="top-center"></Toaster>
+        </main>
 
         <footer className="bg-gray-800 text-white p-4 text-center">
           <p>

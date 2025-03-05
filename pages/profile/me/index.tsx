@@ -63,7 +63,7 @@ export default function Profile() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Profil Pengguna</h1>
+      <h1 className="text-2xl font-bold mb-4">Profil Saya</h1>
       <div className="bg-white shadow-md rounded-lg p-6 w-auto">
         <table>
           <tbody>

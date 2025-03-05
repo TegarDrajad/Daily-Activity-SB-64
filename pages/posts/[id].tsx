@@ -3,6 +3,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
+import { toast } from 'sonner'
 
 type User = {
   id: number
@@ -78,9 +79,9 @@ export default function PostEditPage() {
     e.preventDefault()
     if (!postData) return
     setUpdateLoading(true)
-    const token = localStorage.getItem('token')
+    const token = Cookies.get('token')
     if (!token) {
-      alert('Unauthorized! Please log in.')
+      toast.error('Unauthorized! Please log in.')
       router.push('/auth/login')
       return
     }
@@ -101,11 +102,11 @@ export default function PostEditPage() {
         alert('Failed to update post!')
         return
       }
-      alert(result.message)
+      toast.success('Edit posts successfully')
       router.push('/posts')
     } catch (error) {
       console.error('Error updating post:', error)
-      alert('Internal Server Error!')
+      toast.error('Unauthorized! Please log in.')
     } finally {
       setUpdateLoading(false)
     }
