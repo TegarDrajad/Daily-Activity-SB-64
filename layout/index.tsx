@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Head from 'next/head'
 import { Geist, Geist_Mono } from 'next/font/google'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import Cookies from 'js-cookie'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -21,19 +22,34 @@ export default function RootLayout({
   children: React.ReactNode
   metaTitle?: string
 }) {
+  const router = useRouter()
+  const isAuthentication = Cookies.get('token') || false
 
-  const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const handleLogout = async () => {
+  //   try {
+  //     const token = Cookies.get('token')
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/api/logout`,
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       },
+  //     )
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/auth/login");
-    }else{
-      setIsAuthenticated(true)
-    }
-  }, []);
-  
+  //     const result = await response.json()
+
+  //     if (!response.ok) throw new Error(result.message || 'Logout Failed')
+
+  //     Cookies.remove('token')
+  //     router.push('/auth/login')
+  //   } catch (error) {
+  //     console.error('Logout Error', error)
+  //   }
+  // }
+
   return (
     <>
       <Head>
@@ -48,21 +64,24 @@ export default function RootLayout({
         <header className="bg-blue-300 text-white p-4">
           <div className="container mx-auto flex justify-between items-center gap-10">
             <h1 className="text-md font-bold">Daily Sanber</h1>
-            {isAuthenticated && (
+            {isAuthentication && (
               <ul className="flex space-x-4">
-                <li className='text-md font-bold'>
+                <li className="text-md font-bold">
                   <Link href="/">Home</Link>
                 </li>
                 <li className="text-md font-bold">
                   <Link href="/profile/me">Profile</Link>
                 </li>
+                <li className="text-md font-bold">
+                  <Link href="/posts/me">My Posts</Link>
+                </li>
                 <li>
-                  <button onClick={() => {
-                    localStorage.removeItem("token");
-                    router.push("/auth/login");
-                    setIsAuthenticated(false)
-                  }}
-                  className='w-full text-left text-red-500 hover:text-red-300'
+                  <button
+                    onClick={() => {
+                      Cookies.remove('token')
+                      router.push('/auth/login')
+                    }}
+                    className="text-left text-red-500 hover:text-red-300"
                   >
                     Logout
                   </button>

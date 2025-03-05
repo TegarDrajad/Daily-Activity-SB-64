@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { z } from 'zod'
 import Link from 'next/link'
+import Cookies from 'universal-cookie'
+
+const cookies = new Cookies()
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email format'),
@@ -44,12 +47,13 @@ export default function Login() {
         setError(result.message || 'Login failed')
         alert(result.message)
       } else {
-        localStorage.setItem('token', result.data.token)
+        cookies.set('token', result.data.token, { path: '/' })
         alert(result.message)
         router.push('/')
       }
     } catch (err) {
       setError('An error occurred. Please try again.')
+      console.log(err)
     } finally {
       setLoading(false)
     }
@@ -88,12 +92,16 @@ export default function Login() {
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
-        <div className='text-center mt-4'>
-            <p className='text-gray-600'>Dont Have an account ? 
-              <Link href='/auth/register' className='text-blue-500 hover:underline font-medium'>
-                Register
-              </Link>
-            </p>
+        <div className="text-center mt-4">
+          <p className="text-gray-600">
+            Dont Have an account ?
+            <Link
+              href="/auth/register"
+              className="text-blue-500 hover:underline font-medium"
+            >
+              Register
+            </Link>
+          </p>
         </div>
       </form>
     </div>
