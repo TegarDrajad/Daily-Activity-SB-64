@@ -21,7 +21,7 @@ type Me = {
 
 const fetcher = async (url: string) => {
   const token = Cookies.get('token')
-  console.log(token)
+
   if (!token) {
     throw new Error('Unauthorized')
   }

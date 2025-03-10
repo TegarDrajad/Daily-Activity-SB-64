@@ -2,7 +2,9 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
-import RootLayout from '@/layout'
+import dynamic from 'next/dynamic'
+
+const RootLayout = dynamic(() => import('@/layout'), { ssr: false })
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()

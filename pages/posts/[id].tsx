@@ -53,7 +53,7 @@ export default function PostEditPage() {
       return
     }
 
-    fetch(`https://service.pace-unv.cloud/api/post/${id}`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/post/${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -97,9 +97,9 @@ export default function PostEditPage() {
           body: JSON.stringify({ description: postData.description }),
         },
       )
-      const result = await response.json()
+      // const result = await response.json()
       if (!response.ok) {
-        alert('Failed to update post!')
+        toast.error('Unauthorized! Please log in.')
         return
       }
       toast.success('Edit posts successfully')
@@ -153,7 +153,7 @@ export default function PostEditPage() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 cursor-pointer disabled:bg-gray-400"
+            className="w-full px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-400 transition duration-300 cursor-pointer disabled:bg-gray-400"
             disabled={updateLoading}
           >
             {updateLoading ? 'Updating...' : 'Save Changes'}

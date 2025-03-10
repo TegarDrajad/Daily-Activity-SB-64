@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { serialize } from 'cookie'
 
 export default async function Logout(
   req: NextApiRequest,
@@ -10,7 +9,7 @@ export default async function Logout(
   }
 
   try {
-    const token = req.cookies.token
+    const token = req.headers.authorization
 
     if (!token) {
       return res.status(401).json({ message: 'No Token Provided' })
@@ -30,17 +29,6 @@ export default async function Logout(
     if (!response.ok) {
       throw new Error('Failed to logout')
     }
-
-    res.setHeader(
-      'Set-Cookie',
-      serialize('token', '', {
-        path: '/',
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: -1, // Hapus cookie dengan set maxAge ke -1
-      }),
-    )
 
     return res.status(200).json({
       message: 'Logout Successful',

@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
+import { toast } from 'sonner'
 
 export default function CreatePost() {
   const [description, setDescription] = useState('')
@@ -38,7 +39,7 @@ export default function CreatePost() {
         try {
           const data = await response.json()
           errorMessage = data
-          alert('Vailed to create posts')
+          toast.error('Error add posts')
         } catch (err) {
           console.error('Failed to parse error response:', err)
         }
@@ -47,7 +48,7 @@ export default function CreatePost() {
         return
       }
 
-      alert('Success create posts')
+      toast.success('Add Posts Succesfully')
       router.push('/')
     } catch (error) {
       console.error('An unexpected error happened:', error)
@@ -88,7 +89,7 @@ export default function CreatePost() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 cursor-pointer disabled:bg-gray-400"
+          className="w-full px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-400 transition duration-300 cursor-pointer disabled:bg-gray-400"
           disabled={isLoading}
         >
           {isLoading ? 'Loading...' : 'Submit'}

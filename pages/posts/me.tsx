@@ -112,7 +112,7 @@ export default function MyPostsPage() {
         <h1 className="text-2xl font-bold">My Posts</h1>
         <button
           onClick={() => router.push('/posts/create')}
-          className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-300"
+          className="cursor-pointer px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-300 transition duration-300"
         >
           + New Post
         </button>
@@ -145,10 +145,10 @@ export default function MyPostsPage() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2 sm: justify-between">
                     <button
                       onClick={() => router.push(`/posts/${post.id}`)}
-                      className="px-4 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition"
+                      className="px-4 py-2 text-sm font-medium text-black bg-gray-300 hover:bg-gray-200 transition duration-300 rounded-lg cursor-pointer"
                     >
                       Edit
                     </button>
@@ -156,7 +156,7 @@ export default function MyPostsPage() {
                       <AlertDialogTrigger asChild>
                         <button
                           onClick={() => setDeleteId(post.id)}
-                          className="px-4 py-2 text-sm font-medium text-red-600 border border-red-600 rounded-lg hover:bg-red-600 hover:text-white transition"
+                          className="px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-red-600 transition duration-300 bg-gray-800 cursor-pointer"
                         >
                           Delete
                         </button>
@@ -175,7 +175,7 @@ export default function MyPostsPage() {
                           </AlertDialogCancel>
                           <AlertDialogAction
                             onClick={handleDelete}
-                            className="bg-red-600 text-white"
+                            className="bg-gray-950 text-white"
                           >
                             Delete
                           </AlertDialogAction>

@@ -89,7 +89,8 @@ export default function Login() {
         />
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded mt-2"
+          className={`w-full bg-gray-950 text-white p-2 rounded mt-2 
+            ${loading ? 'cursor-wait' : 'cursor-pointer'}`}
           disabled={loading}
         >
           {loading ? 'Logging in...' : 'Login'}
@@ -99,7 +100,7 @@ export default function Login() {
             Dont Have an account ?
             <Link
               href="/auth/register"
-              className="text-blue-500 hover:underline font-medium"
+              className="text-black hover:underline font-medium underline"
             >
               Register
             </Link>

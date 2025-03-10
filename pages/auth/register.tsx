@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
+import { toast } from 'sonner'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -12,6 +13,7 @@ export default function RegisterPage() {
     hobby: '',
   })
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -23,6 +25,7 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setLoading(true)
 
     const res = await fetch('/api/auth/register', {
       method: 'POST',
@@ -35,11 +38,12 @@ export default function RegisterPage() {
     const data = await res.json()
     if (!res.ok) {
       setError(data.message)
-      alert(data.message)
+      toast.error(data.message)
     } else {
       router.push('/auth/login')
-      alert(data.message)
+      toast.success(data.message)
     }
+    setLoading(false)
   }
 
   return (
@@ -155,9 +159,11 @@ export default function RegisterPage() {
 
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded"
+              className={`w-full bg-gray-950 text-white p-2 rounded mt-2 
+                ${loading ? 'cursor-wait' : 'cursor-pointer'}`}
+              disabled={loading}
             >
-              Submit
+              {loading ? 'Please Waitt' : 'Regist'}
             </button>
           </form>
         </div>
